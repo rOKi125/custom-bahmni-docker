@@ -30,8 +30,15 @@ services:
     environment:
       TZ: ${TZ}
 
-  bahmni-config:
-    image: 'bahmni/standard-config:${CONFIG_IMAGE_TAG:?}'
+  # bahmni-config:
+  #   image: 'bahmni/standard-config:${CONFIG_IMAGE_TAG:?}'
+  #   volumes:
+  #     - '${CONFIG_VOLUME:?}:/usr/local/bahmni_config'
+  #   logging: *log-config
+  #   restart: ${RESTART_POLICY}
+  
+  wecare-config:
+    image: 'wecare/standard-config:latest'
     volumes:
       - '${CONFIG_VOLUME:?}:/usr/local/bahmni_config'
     logging: *log-config
@@ -354,14 +361,24 @@ services:
      - 'bahmni-clinical-forms:/home/bahmni/clinical_forms'
 
   bahmni-web:
-    image: bahmni/bahmni-web:${BAHMNI_WEB_IMAGE_TAG:?}
+    image: wecare-web:codespace 
     profiles: ["emr","bahmni-standard","bahmni-mart"]
     volumes:
       - "${CONFIG_VOLUME:?}:/usr/local/apache2/htdocs/bahmni_config/:ro"
-    #   - "${BAHMNI_APPS_PATH:?}/ui/app/:/usr/local/apache2/htdocs/bahmni"
-    #   - "${BAHMNI_APPS_PATH:?}/ui/node_modules/@bower_components/:/usr/local/apache2/htdocs/bahmni/components"
+      # - "${BAHMNI_APPS_PATH:?}/ui/app/:/usr/local/apache2/htdocs/bahmni"
+      # - "${BAHMNI_APPS_PATH:?}/ui/node_modules/@bower_components/:/usr/local/apache2/htdocs/bahmni/components"
     logging: *log-config
     restart: ${RESTART_POLICY}
+
+  # bahmni-web:
+  #   image: bahmni/bahmni-web:${BAHMNI_WEB_IMAGE_TAG:?}
+  #   profiles: ["emr","bahmni-standard","bahmni-mart"]
+  #   volumes:
+  #     - "${CONFIG_VOLUME:?}:/usr/local/apache2/htdocs/bahmni_config/:ro"
+  #     # - "${BAHMNI_APPS_PATH:?}/ui/app/:/usr/local/apache2/htdocs/bahmni"
+  #     # - "${BAHMNI_APPS_PATH:?}/ui/node_modules/@bower_components/:/usr/local/apache2/htdocs/bahmni/components"
+  #   logging: *log-config
+  #   restart: ${RESTART_POLICY}
 
   implementer-interface:
     image: bahmni/implementer-interface:${IMPLEMENTER_INTERFACE_IMAGE_TAG:?}
